@@ -18,6 +18,15 @@ export interface AwardIntervalsResponse {
   max: AwardInterval[]
 }
 
+export interface NomineeResponse {
+  id: number
+  year: number
+  title: string
+  studios: string
+  producers: string
+  winner: boolean
+}
+
 interface CsvRowData {
   year: string
   title: string
@@ -206,6 +215,53 @@ export class MovieAwardService {
 
   async importParsedData(data: CsvRowData[]): Promise<void> {
     for (const row of data) await this.processCsvRowData(row)
+  }
+
+  async listNominatedMovies(year: number): Promise<NomineeResponse[]> {
+    const nominees = await this.getNominatedMovieRepository()
+      .createQueryBuilder("nominatedMovie")
+      .innerJoinAndSelect("nominatedMovie.movie", "movie")
+      .innerJoinAndSelect("nominatedMovie.award", "award")
+      .leftJoinAndSelect("movie.studios", "studios")
+      .leftJoinAndSelect("movie.producers", "producers")
+      .where("award.year = :year", { year })
+      .orderBy("nominatedMovie.winner", "DESC")
+      .addOrderBy("movie.title", "ASC")
+      .getMany()
+
+    const response = nominees.map((nomination) => ({
+      id: nomination.movie.id,
+      year: nomination.award.year,
+      title: nomination.movie.title,
+      studios: nomination.movie.studios.map((s) => s.name).join(", "),
+      producers: nomination.movie.producers.map((p) => p.name).join(", "),
+      winner: nomination.winner,
+    }))
+
+    return response
+  }
+
+  async listWinners(): Promise<NomineeResponse[]> {
+    const winners = await this.getNominatedMovieRepository()
+      .createQueryBuilder("nominatedMovie")
+      .innerJoinAndSelect("nominatedMovie.movie", "movie")
+      .innerJoinAndSelect("nominatedMovie.award", "award")
+      .leftJoinAndSelect("movie.studios", "studios")
+      .leftJoinAndSelect("movie.producers", "producers")
+      .where("nominatedMovie.winner = :winnerStatus", { winnerStatus: true })
+      .orderBy("award.year", "ASC")
+      .getMany()
+
+    const response = winners.map((nomination) => ({
+      id: nomination.movie.id,
+      year: nomination.award.year,
+      title: nomination.movie.title,
+      studios: nomination.movie.studios.map((s) => s.name).join(", "),
+      producers: nomination.movie.producers.map((p) => p.name).join(", "),
+      winner: nomination.winner,
+    }))
+
+    return response
   }
 
   async getAwardIntervals(): Promise<AwardIntervalsResponse> {

@@ -128,9 +128,10 @@ O projeto foi desenvolvido usando um conjunto de ferramentas e bibliotecas robus
 
 ## 🛣️ Endpoints da API
 
-A API expõe o seguinte endpoint para consultar os intervalos de prêmios:
+A API expõe os seguintes endpoints para consulta dos prêmios Golden Raspberry:
 
 - **`GET /api/v1/dashboard/min-max`**:
+
   - **Descrição**: Retorna os produtores com os menores e maiores intervalos entre duas vitórias consecutivas no Golden Raspberry Awards, com base nos dados carregados no banco de dados.
   - **Resposta de Exemplo (200 OK)**:
     ```json
@@ -151,5 +152,68 @@ A API expõe o seguinte endpoint para consultar os intervalos de prêmios:
           "followingWin": 2015
         }
       ]
+    }
+    ```
+
+- **`GET /api/v1/winners`**:
+
+  - **Descrição**: Retorna uma lista de todos os filmes que foram vencedores do Golden Raspberry Award, incluindo seus detalhes.
+  - **Resposta de Exemplo (200 OK)**:
+    ```json
+    [
+      {
+        "id": 1,
+        "year": 1980,
+        "title": "Can't Stop the Music",
+        "studios": "Associated Film Distribution",
+        "producers": "Allan Carr",
+        "winner": true
+      },
+      {
+        "id": 11,
+        "year": 1981,
+        "title": "Mommie Dearest",
+        "studios": "Paramount Pictures",
+        "producers": "Frank Yablans",
+        "winner": true
+      }
+      // ... mais vencedores ...
+    ]
+    ```
+
+- **`GET /api/v1/nominees/:year`**:
+  - **Descrição**: Retorna uma lista de todos os filmes indicados (vencedores ou não) para o Golden Raspberry Award em um ano específico. Se o ano não existir na base de dados ou não tiver indicados, um array vazio será retornado.
+  - **Parâmetros de Path**:
+    - `:year` (obrigatório): O ano para o qual se deseja buscar os indicados (ex: `1980`).
+  - **Resposta de Exemplo (200 OK para `GET /api/v1/nominees/1980`)**:
+    ```json
+    [
+      {
+        "id": 1,
+        "year": 1980,
+        "title": "Can't Stop the Music",
+        "studios": "Associated Film Distribution",
+        "producers": "Allan Carr",
+        "winner": true
+      },
+      {
+        "id": 2,
+        "year": 1980,
+        "title": "Cruising",
+        "studios": "Lorimar Productions, United Artists",
+        "producers": "Jerry Weintraub",
+        "winner": false
+      }
+      // ... mais indicados para 1980 ...
+    ]
+    ```
+  - **Resposta de Exemplo (200 OK para `GET /api/v1/nominees/9999` ou ano sem indicados)**:
+    ```json
+    []
+    ```
+  - **Resposta de Exemplo (400 Bad Request para `GET /api/v1/nominees/abc`)**:
+    ```json
+    {
+      "message": "Ano fornecido inválido. Por favor, forneça um número válido para o ano."
     }
     ```
