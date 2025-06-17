@@ -31,7 +31,7 @@ Este projeto implementa uma API para gerenciar e consultar os vencedores do prê
     npm run dev
     ```
     O servidor estará disponível em `http://localhost:3000` (ou na porta configurada via variáveis de ambiente).
-    Acesse: `http://localhost:3000/api/v1/dashboard/min-max` para ver o resultado dos intervalos.
+    Acesse: `http://localhost:3000/api/v1/dashboard/intervals` para ver o resultado dos intervalos.
 
 ### Executando a Aplicação (Servidor de Produção)
 
@@ -130,7 +130,7 @@ O projeto foi desenvolvido usando um conjunto de ferramentas e bibliotecas robus
 
 A API expõe os seguintes endpoints para consulta dos prêmios Golden Raspberry:
 
-- **`GET /api/v1/dashboard/min-max`**:
+- **`GET /api/v1/dashboard/intervals`**:
 
   - **Descrição**: Retorna os produtores com os menores e maiores intervalos entre duas vitórias consecutivas no Golden Raspberry Awards, com base nos dados carregados no banco de dados.
   - **Resposta de Exemplo (200 OK)**:

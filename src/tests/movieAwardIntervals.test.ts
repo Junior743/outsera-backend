@@ -34,9 +34,9 @@ describe("Award Intervals API Integration Test", () => {
     await deleteDataBaseFile(dbFilePath)
   })
 
-  describe("GET /api/v1/dashboard/min-max", () => {
+  describe("GET /api/v1/dashboard/intervals", () => {
     it("should return the correct min and max award intervals based on test data", async () => {
-      const response = await request(app).get("/api/v1/dashboard/min-max")
+      const response = await request(app).get("/api/v1/dashboard/intervals")
 
       expect(response.statusCode).toBe(200)
       expect(response.headers["content-type"]).toMatch(/json/)
