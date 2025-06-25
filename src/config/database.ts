@@ -3,14 +3,18 @@ import path from "path"
 
 export let AppDataSource: DataSource
 
-export async function initializeDatabase(databasePath: string) {
+export async function initializeDatabase() {
   try {
     AppDataSource = new DataSource({
       type: "sqlite",
-      database: databasePath,
+      database: ":memory:",
       synchronize: true,
       logging: false,
-      entities: [path.join(__dirname, "..", "models", "*.ts")],
+      entities: [
+        process.env.NODE_ENV === "production"
+          ? path.join(__dirname, "..", "models", "*.js")
+          : path.join(__dirname, "..", "models", "*.ts"),
+      ],
       migrations: [],
       subscribers: [],
     })

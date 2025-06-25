@@ -2,7 +2,6 @@ import { MovieAwardService } from "../services/MovieAwardService"
 import { initializeDatabase } from "../config/database"
 import { AppDataSource } from "../config/database"
 import { CsvService } from "../services/CsvService"
-import { deleteDataBaseFile } from "../utils"
 import { app } from ".."
 import request from "supertest"
 import dotenv from "dotenv"
@@ -11,17 +10,10 @@ import path from "path"
 dotenv.config()
 
 const testCsvFilePath = path.join(__dirname, "testdata.csv")
-const dbFilePath = path.join(
-  __dirname,
-  "..",
-  "..",
-  process.env.DATABASE_FILE_NAME_TEST || "test_database.sqlite",
-)
 
 describe("Award Intervals API Integration Test", () => {
   beforeAll(async () => {
-    await deleteDataBaseFile(dbFilePath)
-    await initializeDatabase(dbFilePath)
+    await initializeDatabase()
 
     const csvService = new CsvService()
     const movieAwardService = new MovieAwardService()
@@ -31,7 +23,6 @@ describe("Award Intervals API Integration Test", () => {
 
   afterAll(async () => {
     if (AppDataSource.isInitialized) await AppDataSource.destroy()
-    await deleteDataBaseFile(dbFilePath)
   })
 
   describe("GET /api/v1/dashboard/intervals", () => {

@@ -2,7 +2,6 @@ import "reflect-metadata"
 import { MovieAwardService } from "./services/MovieAwardService"
 import { initializeDatabase } from "./config/database"
 import { CsvService } from "./services/CsvService"
-import { deleteDataBaseFile } from "./utils"
 import router from "./routes"
 import express from "express"
 import dotenv from "dotenv"
@@ -23,19 +22,12 @@ const csvFilePath = path.join(
   "..",
   process.env.CSV_FILE_NAME || "Movielist.csv",
 )
-const dbFilePath = path.join(
-  __dirname,
-  "..",
-  process.env.DATABASE_FILE_NAME || "database.sqlite",
-)
 
 async function startApplication() {
   try {
     if (require.main === module) {
-      await deleteDataBaseFile(dbFilePath)
-
       console.log("Inicializando base de dados...")
-      await initializeDatabase(dbFilePath)
+      await initializeDatabase()
       console.log("Nova base de dados configurada com sucesso!")
 
       console.log("Carregando informações na base de dados...")
